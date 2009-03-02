@@ -168,10 +168,41 @@
 				u = tinymce._addVer(u);
 			}
 
+
 			if (!f.type) {
-				DOM.add(id + '_content', 'iframe', {id : id + '_ifr', src : 'javascript:""', frameBorder : 0, style : 'border:0;width:10px;height:10px'});
-				DOM.setStyles(id + '_ifr', {width : f.width, height : f.height});
-				DOM.setAttrib(id + '_ifr', 'src', u);
+			  
+        // if (t.editor.getParam('inline_popups_html2js_url'))
+			  // Load in the content via a script, instead of src'ing the HTML document
+			  var contentScriptSrc = document.location.protocol+'//'+t.editor.getParam('inline_popups_html2js_url') + u + "&id=" +  id + "&w=" + f.width + "&h=" + f.height;
+			  var contentScript = '<script type="text/javascript" src="'+contentScriptSrc + '"></script>';
+
+			  // load html into iframe
+			  if (true) {
+  			  // Prevent Access Denied Errors
+  			  if (tinymce.isIE)
+  			    iu = 'javascript:(function(){document.open();document.write(\''+contentScript+'\');document.close();})()';
+  			  else
+  			    iu = 'javascript:""'
+			  
+  				DOM.add(id + '_content', 'iframe', {id : id + '_ifr', src : iu, frameBorder : 0, style : 'border:0;width:10px;height:10px'});
+  				DOM.setStyles(id + '_ifr', {width : f.width, height : f.height});
+          // DOM.setAttrib(id + '_ifr', 'src', u); // Avoid this call to avoid XSS
+        
+          // Start testing on how to write to window
+          if (!tinymce.isIE) {
+            idoc = DOM.get(id + "_ifr").contentWindow.document;
+            idoc.open();
+    				idoc.write(contentScript);
+    				idoc.close();
+  		    }
+  				// END testing on how to write to window
+  			}
+  			// load html into iframe where js creates iframe
+  			else if (false) {
+          // alert("LOADING "+contentScriptSrc);
+  			  tinymce.dom.ScriptLoader.loadScript(contentScriptSrc, function() {});
+  			}
+        
 			} else {
 				DOM.add(id + '_wrapper', 'a', {id : id + '_ok', 'class' : 'mceButton mceOk', href : 'javascript:;', onmousedown : 'return false;'}, 'Ok');
 
