@@ -6386,9 +6386,11 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 			if (document.domain && lo.hostname != document.domain)
 				tinymce.relaxedDomain = document.domain;
 
+      // CDN Fix: The document will always be loaded from another domain, which works fine, so don't 
+      // mess with the document's domain, which may cause undesired side-effects with other scripts.
 			// Setup document domain if tinymce is loaded from other domain
-			if (!tinymce.relaxedDomain && tinymce.EditorManager.baseURI.host != lo.hostname && lo.hostname)
-				document.domain = tinymce.relaxedDomain = lo.hostname.replace(/.*\.(.+\..+)$/, '$1');
+      // - if (!tinymce.relaxedDomain && tinymce.EditorManager.baseURI.host != lo.hostname && lo.hostname)
+      // -  document.domain = tinymce.relaxedDomain = lo.hostname.replace(/.*\.(.+\..+)$/, '$1');
 
 			// Add before unload listener
 			// This was required since IE was leaking memory if you added and removed beforeunload listeners

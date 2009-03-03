@@ -1,0 +1,3 @@
+build/**/*
+config/*.yml
+.DS_Store

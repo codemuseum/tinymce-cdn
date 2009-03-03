@@ -169,9 +169,28 @@
 			}
 
 			if (!f.type) {
-				DOM.add(id + '_content', 'iframe', {id : id + '_ifr', src : 'javascript:""', frameBorder : 0, style : 'border:0;width:10px;height:10px'});
-				DOM.setStyles(id + '_ifr', {width : f.width, height : f.height});
-				DOM.setAttrib(id + '_ifr', 'src', u);
+			  if (!t.editor.getParam('cdn_host')) {
+  				DOM.add(id + '_content', 'iframe', {id : id + '_ifr', src : 'javascript:""', frameBorder : 0, style : 'border:0;width:10px;height:10px'});
+  				DOM.setStyles(id + '_ifr', {width : f.width, height : f.height});
+  				DOM.setAttrib(id + '_ifr', 'src', u);
+			  } else {
+			    // If this is being hosted on a CDN, we have to do inline popups much differently than we normally would load an iframe
+			    //   - first, we load the script in using the full CDN host URL
+			    var cdnU = document.location.protocol + '//' + t.editor.getParam('cdn_host') + u.replace(/\.htm/, ".htm.cdn.js") + "&id=" +  id + "&w=" + f.width + "&h=" + f.height;
+			    var scriptU = '<'+'script type="text/javascript" src="'+cdnU+ '"></'+'script'+'>';
+			    
+			    var iu = 'javascript:""'
+			    if (tinymce.isIE)
+			      iu = 'javascript:(function(){document.open();document.write(\''+scriptU+'\');document.close();})()';
+         
+          DOM.add(id + '_content', 'iframe', {id : id + '_ifr', src : iu, frameBorder : 0, style : 'border:0;width:10px;height:10px'});
+          DOM.setStyles(id + '_ifr', {width : f.width, height : f.height});
+          
+          if (!tinymce.isIE) {
+            var idoc = DOM.get(id + "_ifr").contentWindow.document;
+            idoc.open(); idoc.write(scriptU); idoc.close();
+  		    }
+			  }
 			} else {
 				DOM.add(id + '_wrapper', 'a', {id : id + '_ok', 'class' : 'mceButton mceOk', href : 'javascript:;', onmousedown : 'return false;'}, 'Ok');
 
