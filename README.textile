@@ -75,4 +75,6 @@ The @cdn_host@ parameter tells the script that it should be loading all plugins 
 h2. How TinyMCE CDN Works
 
 There have been a couple of changes to the source of TinyMCE to make it work with a CDN.  The best way is to look at our patch
-which outlines the changes.  You can find this in the @development@ directory.
+which outlines the changes.  You can find this in the @development@ directory, in a file called @cdn-changes@.  
+
+Here's the link to the "CDN patch":http://github.com/moorage/tinymce-cdn/blob/development/cdn-changes.diff

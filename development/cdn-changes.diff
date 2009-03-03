@@ -1,0 +1,77 @@
+From b9bd217b1feaf81b5cedb349e5afcafdb7d02fa8 Mon Sep 17 00:00:00 2001
+From: Matthew Moore <matt@thrivesmart.com>
+Date: Tue, 3 Mar 2009 11:45:52 -1000
+Subject: [PATCH] base changes
+
+---
+ .../plugins/inlinepopups/editor_plugin_src.js      |   25 +++++++++++++++++--
+ jscripts/tiny_mce/tiny_mce_src.js                  |    9 +++++-
+ 2 files changed, 29 insertions(+), 5 deletions(-)
+
+diff --git a/jscripts/tiny_mce/plugins/inlinepopups/editor_plugin_src.js b/jscripts/tiny_mce/plugins/inlinepopups/editor_plugin_src.js
+index 027a23c..da6d117 100755
+--- a/jscripts/tiny_mce/plugins/inlinepopups/editor_plugin_src.js
++++ b/jscripts/tiny_mce/plugins/inlinepopups/editor_plugin_src.js
+@@ -169,9 +169,28 @@
+ 			}
+ 
+ 			if (!f.type) {
+-				DOM.add(id + '_content', 'iframe', {id : id + '_ifr', src : 'javascript:""', frameBorder : 0, style : 'border:0;width:10px;height:10px'});
+-				DOM.setStyles(id + '_ifr', {width : f.width, height : f.height});
+-				DOM.setAttrib(id + '_ifr', 'src', u);
++			  if (!t.editor.getParam('cdn_host')) {
++  				DOM.add(id + '_content', 'iframe', {id : id + '_ifr', src : 'javascript:""', frameBorder : 0, style : 'border:0;width:10px;height:10px'});
++  				DOM.setStyles(id + '_ifr', {width : f.width, height : f.height});
++  				DOM.setAttrib(id + '_ifr', 'src', u);
++			  } else {
++			    // If this is being hosted on a CDN, we have to do inline popups much differently than we normally would load an iframe
++			    //   - first, we load the script in using the full CDN host URL, which has been pre-comupted in the 'u' var already
++			    var cdnU = u.replace(/\.htm/, ".htm.cdn.js") + (u.indexOf('?') == -1 ? '?' : '&') + "id=" +  id + "&w=" + f.width + "&h=" + f.height;
++			    var scriptU = '<'+'script type="text/javascript" src="'+cdnU+ '"></'+'script'+'>';
++			    
++			    var iu = 'javascript:""'
++			    if (tinymce.isIE)
++			      iu = 'javascript:(function(){document.open();document.write(\''+scriptU+'\');document.close();})()';
++         
++          DOM.add(id + '_content', 'iframe', {id : id + '_ifr', src : iu, frameBorder : 0, style : 'border:0;width:10px;height:10px'});
++          DOM.setStyles(id + '_ifr', {width : f.width, height : f.height});
++          
++          if (!tinymce.isIE) {
++            var idoc = DOM.get(id + "_ifr").contentWindow.document;
++            idoc.open(); idoc.write(scriptU); idoc.close();
++  		    }
++			  }
+ 			} else {
+ 				DOM.add(id + '_wrapper', 'a', {id : id + '_ok', 'class' : 'mceButton mceOk', href : 'javascript:;', onmousedown : 'return false;'}, 'Ok');
+ 
+diff --git a/jscripts/tiny_mce/tiny_mce_src.js b/jscripts/tiny_mce/tiny_mce_src.js
+index cd83a45..e397418 100755
+--- a/jscripts/tiny_mce/tiny_mce_src.js
++++ b/jscripts/tiny_mce/tiny_mce_src.js
+@@ -2724,6 +2724,9 @@ tinymce.create('static tinymce.util.XHR', {
+ 
+ 	// Shorten name
+ 	Event = tinymce.dom.Event;
++	
++	// CDN Fix: Prevent inline document.writes by telling TinyMCE that we've loaded the dom already
++	Event.domLoaded = true;
+ 
+ 	// Dispatch DOM content loaded event for IE and Safari
+ 	Event._wait();
+@@ -6386,9 +6389,11 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
+ 			if (document.domain && lo.hostname != document.domain)
+ 				tinymce.relaxedDomain = document.domain;
+ 
++      // CDN Fix: The document will always be loaded from another domain, which works fine, so don't 
++      // mess with the document's domain, which may cause undesired side-effects with other scripts.
+ 			// Setup document domain if tinymce is loaded from other domain
+-			if (!tinymce.relaxedDomain && tinymce.EditorManager.baseURI.host != lo.hostname && lo.hostname)
+-				document.domain = tinymce.relaxedDomain = lo.hostname.replace(/.*\.(.+\..+)$/, '$1');
++      // - if (!tinymce.relaxedDomain && tinymce.EditorManager.baseURI.host != lo.hostname && lo.hostname)
++      // -  document.domain = tinymce.relaxedDomain = lo.hostname.replace(/.*\.(.+\..+)$/, '$1');
+ 
+ 			// Add before unload listener
+ 			// This was required since IE was leaking memory if you added and removed beforeunload listeners
+-- 
+1.5.6.4
+
