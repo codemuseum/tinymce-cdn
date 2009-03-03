@@ -41,8 +41,8 @@ def fix_paths(content, file_path, asset_host_path)
   asset_file_path = "HTTP_OR_S://#{asset_host_path}#{relative_file_path}"
   content.
     gsub(/type="text\/javascript" src="/, "type=\"text/javascript\" src=\"#{asset_file_path}").
-    gsub(/href="css\//, "href=\"#{asset_file_path}/css/").
-    gsub(/ src="img\//, " src=\"#{asset_file_path}/img/")
+    gsub(/href="css\//, "href=\"#{asset_file_path}css/").
+    gsub(/ src="img\//, " src=\"#{asset_file_path}img/")
 end
 
 # Replaces HTTP_OR_S: with the correct javascript method of doing this, document.location.protocol.
