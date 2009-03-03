@@ -6,9 +6,12 @@ It's been designed to be hosted on a content delivery network and work correctly
 h2. Installation
 
 There are three steps to install TinyMCE on a CDN:
+
 * Compile The HTM files Into JS files using the included script
 * Upload the @jscripts/tiny_mce@ folder to your CDN
 * Call TinyMCE correctly from your web page
+
+
 
 h3. Compile The HTM files Into JS files using the included script
 
@@ -27,6 +30,8 @@ Here's an example if you wanted to use Amazon S3, with a bucket called "my-bucke
 
 In the correct directories, you'll now see @.cdn.js@ files created, e.g. @jscripts/tiny_mce/plugin/advhr/rule.htm.cdn.js@.  
 This file was created by the cdn-compile.rb script, using the source html file @jscripts/tiny_mce/plugin/advhr/rule.htm@.
+
+
 
 h3. Upload the @jscripts/tiny_mce@ folder to your CDN
 
@@ -51,6 +56,8 @@ following files:
 
 And that's it!  Don't forget to recursively set the Access Control List (ACL) of your @my-bucket@ to be readable by everyone.
 
+
+
 h3. Call TinyMCE correctly from your web page
 
 As you probably know, to instantiate TinyMCE, you typically call the @tinyMCE.init@ method, after including the javascript 
@@ -72,9 +79,10 @@ The calls now look like this:
 
 The @cdn_host@ parameter tells the script that it should be loading all plugins from the CDN source, rather than elsewhere.
 
+
 h2. How TinyMCE CDN Works
 
 There have been a couple of changes to the source of TinyMCE to make it work with a CDN.  The best way is to look at our patch
 which outlines the changes.  You can find this in the @development@ directory, in a file called @cdn-changes@.  
 
-Here's the link to the "CDN patch":http://github.com/moorage/tinymce-cdn/blob/development/cdn-changes.diff
+Here's a link to it: "TinyMCE CDN patch":http://github.com/moorage/tinymce-cdn/blob/a4e288b21fc91c0adc8e7f798056b5694bc995ee/development/cdn-changes.diff
