@@ -175,8 +175,8 @@
   				DOM.setAttrib(id + '_ifr', 'src', u);
 			  } else {
 			    // If this is being hosted on a CDN, we have to do inline popups much differently than we normally would load an iframe
-			    //   - first, we load the script in using the full CDN host URL
-			    var cdnU = document.location.protocol + '//' + t.editor.getParam('cdn_host') + u.replace(/\.htm/, ".htm.cdn.js") + "&id=" +  id + "&w=" + f.width + "&h=" + f.height;
+			    //   - first, we load the script in using the full CDN host URL, which has been pre-comupted in the 'u' var already
+			    var cdnU = u.replace(/\.htm/, ".htm.cdn.js") + "&id=" +  id + "&w=" + f.width + "&h=" + f.height;
 			    var scriptU = '<'+'script type="text/javascript" src="'+cdnU+ '"></'+'script'+'>';
 			    
 			    var iu = 'javascript:""'
