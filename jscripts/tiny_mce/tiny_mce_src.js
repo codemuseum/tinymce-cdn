@@ -2724,6 +2724,9 @@ tinymce.create('static tinymce.util.XHR', {
 
 	// Shorten name
 	Event = tinymce.dom.Event;
+	
+	// CDN Fix: Prevent inline document.writes by telling TinyMCE that we've loaded the dom already
+	Event.domLoaded = true;
 
 	// Dispatch DOM content loaded event for IE and Safari
 	Event._wait();
