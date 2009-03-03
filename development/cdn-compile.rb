@@ -51,6 +51,17 @@ def fix_domains(content)
   content.gsub(/HTTP_OR_S:/, "\" + document.location.protocol +\"")
 end
 
+# Removes the javascripted version of the file, "#{filename}.cdn.js" if it exists.
+# Add this to a "clean" call in the future
+def remove_processed_file(file_path)
+  return unless file_path.match(/\.htm$/)
+  
+  if File.exist?("#{file_path}.cdn.js")
+    File.delete("#{file_path}.cdn.js")
+    puts "Deleted #{file_path}.cdn.js"
+  end
+end
+
 # Outputs the javascripted version of the file to "#{filename}.cdn.js"
 def process_file(file_path)
   return unless file_path.match(/\.htm$/)

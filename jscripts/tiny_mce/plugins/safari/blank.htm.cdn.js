@@ -1,1 +1,0 @@
-document.open();document.write("\u003C!-- WebKit --\u003E");document.close();

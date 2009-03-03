@@ -1,3 +1,4 @@
 build/**/*
+*.htm.cdn.js
 config/*.yml
 .DS_Store
