@@ -179,7 +179,7 @@
 			    var cdnU = u.replace(/\.htm/, ".htm.cdn.js") + (u.indexOf('?') == -1 ? '?' : '&') + "id=" +  id + "&w=" + f.width + "&h=" + f.height;
 			    var scriptU = '<'+'script type="text/javascript" src="'+cdnU+ '"></'+'script'+'>';
 			    
-			    var iu = 'javascript:""'
+			    var iu = 'javascript:""';
 			    if (tinymce.isIE)
 			      iu = 'javascript:(function(){document.open();document.write(\''+scriptU+'\');document.close();})()';
          
